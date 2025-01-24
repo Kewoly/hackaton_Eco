@@ -1,0 +1,23 @@
+name: "Build & Deploy"
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build-and-deploy:
+    name: Build Docker image and push API to Docker Hub
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name : Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login ${{secrets.DOCKERHUB_TURL}} -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_TURL }}/hackaton-25-data:latest .
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_TURL }}/hackaton-25-data:latest
